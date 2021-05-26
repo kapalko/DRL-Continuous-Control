@@ -76,7 +76,7 @@ class Agent():
             action += self.noise.sample()
         return np.clip(action, -1, 1)
         
-    def learn(self):
+    def learn(self, experiences, gamma):
         """Update policy and value parameters using batch of experience tuples.
         y_i = r_i + γ * critic_target(next_state, actor_target(next_state)),
         where y_i are the Q targets, and where:
@@ -89,13 +89,53 @@ class Agent():
             gamma (float): discount factor        
         """
         
-        pass
+        # create variables from experiences tuple
+        states, actions, rewards, next_states, dones = experiences
+        
+        # -----update the critic-----
+        # get predicted next-state actions and Q values from targets
+        actions_next = self.actor_target(next_states)
+        Q_targets_next = self.critic_target(next_states, actions_next)  # maps the (state, action) pairs to the Q-values
+        # compute Q targets for current states, y_i
+        Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))  # we use 1-dones since there won't be any discounted rewards since the episode ends
+        # compute the critic loss
+        Q_expected = self.critic_local(states, actions)
+        critic_loss = F.mse_loss(Q_expected, Q_targets)
+        # optimize the loss
+        self.critic_optimizer.zero_grad()  # always reset the gradient to zero
+        critic_loss.backward()
+        self.critic_optimizer.step()        
+        
+        # -----update the actor-----
+        # using sampled policy gradient
+        # compute the actor loss
+        actions_pred = self.actor_local(states)
+        actor_loss = -self.critic_local(states, actions_pred).mean()
+        
+        # optimize the loss
+        self.actor_optimizer.zero_grad()
+        actor_loss.backward()
+        self.actor_optimizer.step()        
+        
+        # update the target networks
+        self.soft_update(self.critic_local, self.critic_target, TAU)
+        self.soft_update(self.actor_local, self.actor_target, TAU)
         
     def reset(self):
         self.noise.reset()
         
     def soft_update(self):
-        pass
+        """Soft updates are used for stability according to the paper
+        
+        Soft update model parameters.
+        θ_target = tau * θ_local + (1 - tau) * θ_target
+        
+        Params
+        ======
+            local_model: PyTorch model that weights will be copied from
+            target_model: PyTorch model that weights will be copied to
+            tau (float): target update parameter
+        """
 
 
 class OU_Noise():
