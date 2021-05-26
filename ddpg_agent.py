@@ -124,7 +124,7 @@ class Agent():
     def reset(self):
         self.noise.reset()
         
-    def soft_update(self):
+    def soft_update(self, local_model, target_model, tau):
         """Soft updates are used for stability according to the paper
         
         Soft update model parameters.
@@ -134,9 +134,11 @@ class Agent():
         ======
             local_model: PyTorch model that weights will be copied from
             target_model: PyTorch model that weights will be copied to
-            tau (float): target update parameter
+            tau (float): soft update coefficient
         """
-
+        for var, target_var in zip(local_model.parameters(), target_model.parameters()):
+            with torch.no_grad():
+                target_var.copy(tau * var + (1.0 - tau) * target_var)
 
 class OU_Noise():
     """Ornstein-Uhlenbeck process."""
