@@ -65,17 +65,37 @@ class Agent():
             experiences = self.memory.sample()
             self.learn(experiences, GAMMA)
     
-    def act():
-    
+    def act(self, state, add_noise=True):
+        """Takes an action from the policy given our current state and adds noise if requested"""
+        state = torch.from_numpy(state).float().to(device)  # converts our observation to a format used by the policy
+        self.actor_local.eval()
+        with torch.no_grad():
+            action = self.actor_local(state).cpu().data.numpy()
+        self.actor_local.train()
+        if add_noise:
+            action += self.noise.sample()
+        return np.clip(action, -1, 1)
         
-    def learn():
-    
+    def learn(self):
+        """Update policy and value parameters using batch of experience tuples.
+        y_i = r_i + γ * critic_target(next_state, actor_target(next_state)),
+        where y_i are the Q targets, and where:
+            actor_target(state) -> action
+            critic_target(state, action) -> Q value
         
-    def reset():
-    
+        Params
+        ======
+            experiences (Tuple[torch.Tensor]): tuple of (s, a, r, s', done) tuples
+            gamma (float): discount factor        
+        """
         
-    def soft_update():
-
+        pass
+        
+    def reset(self):
+        self.noise.reset()
+        
+    def soft_update(self):
+        pass
 
 
 class OU_Noise():
@@ -116,7 +136,7 @@ class ReplayBuffer:
         self.seed = random.seed(seed)
         self.experience = namedtuple('Experience', field_names=['state', 'action', 'reward', 'next_state', 'done'])
         
-    def add(self):
+    def add(self, state, action, reward, next_state, done):
         """Add experience to the memory buffer"""
         
         ex = self.experience(state, action, reward, next_state, done)
