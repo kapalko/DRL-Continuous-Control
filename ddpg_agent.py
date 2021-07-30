@@ -13,19 +13,19 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 128        # minibatch size
+BATCH_SIZE = 512        # minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # soft update of target parameters
 LR_ACTOR = 1e-4         # actor learning rate
 LR_CRITIC = 1e-3        # critic learning rate
-WEIGHT_DECAY = 0        # L2 weigth decay
+WEIGHT_DECAY = 0        # L2 weight decay
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class Agent():
     """The Agent interacts with and learns from the environment."""
     
-    def __init__(self, state_size, action_size, random_seed):
+    def __init__(self, state_size, action_size, random_seed=41):
         """Initialize an Agent object.
         
         Params
@@ -137,8 +137,8 @@ class Agent():
             tau (float): soft update coefficient
         """
         for var, target_var in zip(local_model.parameters(), target_model.parameters()):
-            with torch.no_grad():
-                target_var.copy(tau * var + (1.0 - tau) * target_var)
+            # with torch.no_grad():
+            target_var.data.copy_(tau * var.data + (1.0 - tau) * target_var.data)
 
 class OU_Noise():
     """Ornstein-Uhlenbeck process."""
@@ -195,4 +195,7 @@ class ReplayBuffer:
         dones = torch.from_numpy(np.vstack([e.done for e in experiences if e is not None]).astype(np.uint8)).float().to(device)
         
         return (states, actions, rewards, next_states, dones)
-        
+    
+    def __len__(self):
+        """Return the current size of internal memory. Otherwise, you cannot pull the length of the ReplayBuffer object"""
+        return len(self.memory)
