@@ -13,12 +13,13 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 1024        # minibatch size
+BATCH_SIZE = 512        # minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # soft update of target parameters
-LR_ACTOR = 1e-4         # actor learning rate
+LR_ACTOR = 1e-3         # actor learning rate
 LR_CRITIC = 1e-3        # critic learning rate
 WEIGHT_DECAY = 0        # L2 weight decay
+UPDATE_EVERY = 1       # how often the networks update
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -55,14 +56,14 @@ class Agent():
         # initialize replay memory
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
         
-    def step(self, states, actions, rewards, next_states, dones):
+    def step(self, states, actions, rewards, next_states, dones, step_count):
         
         # add state and reward to memory
         for state, action, reward, next_state, done in zip(states, actions, rewards, next_states, dones):
             self.memory.add(state, action, reward, next_state, done)
         
         # if enough samples are available in memory
-        if len(self.memory) > BATCH_SIZE:
+        if len(self.memory) > BATCH_SIZE and step_count % UPDATE_EVERY == 0:
             experiences = self.memory.sample()
             self.learn(experiences, GAMMA)
     
