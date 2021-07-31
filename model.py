@@ -39,8 +39,10 @@ class Actor(nn.Module):
         return F.tanh(self.fc3(x))
     
     def reset_parameters(self):
-        nn.init.normal_(self.fc1.weight, 0, self.fc1_units**-0.5)
-        nn.init.normal_(self.fc2.weight, 0, self.fc2_units**-0.5)
+        # nn.init.normal_(self.fc1.weight, 0, self.fc1_units**-0.5)
+        # nn.init.normal_(self.fc2.weight, 0, self.fc2_units**-0.5)
+        nn.init.xavier_normal_(self.fc1.weight)
+        nn.init.xavier_normal_(self.fc2.weight)
         nn.init.xavier_uniform_(self.fc3.weight)
     
 class Critic(nn.Module):
@@ -66,8 +68,10 @@ class Critic(nn.Module):
         self.reset_parameters()
         
     def reset_parameters(self):
-        nn.init.normal_(self.fc1.weight, 0, self.fc1_units**-0.5)
-        nn.init.normal_(self.fc2.weight, 0, self.fc2_units**-0.5)
+        # nn.init.normal_(self.fc1.weight, 0, self.fc1_units**-0.5)
+        # nn.init.normal_(self.fc2.weight, 0, self.fc2_units**-0.5)
+        nn.init.xavier_normal_(self.fc1.weight)
+        nn.init.xavier_normal_(self.fc2.weight)
         nn.init.xavier_uniform_(self.fc3.weight)
         
     def forward(self, state, action):
