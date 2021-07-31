@@ -29,7 +29,7 @@ There are two versions of the environment. Version 1 includes one agent. Version
 
 ## The Environment
 
-| ![Reacher Game](media/Reacher.gif) |
+| ![Reacher Game](media/reacher.gif) |
 | --- |
 | *The Reacher environment captured by the Udacity team.* |
 
