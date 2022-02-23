@@ -11,7 +11,7 @@ The environment was solved in 180 episodes using a DDPG algorithm.
 | *Training results* |
 
 ## Software Requirements
-A conda environment yaml file is provided, but is not guaranteed to work. Installation instructions are provided below.
+A conda environment yaml file is provided, but is not guaranteed to work. Installation instructions are provided below and are recommended if the conda environment fails.
 
 This project was completed on MacOS Big Sur, v11.5, with `python==3.6.12`, `unityagents==0.4.0`, and `torch==0.4.0`.
 
@@ -33,7 +33,7 @@ There are two versions of the environment. Version 1 includes one agent. Version
 | --- |
 | *The Reacher environment captured by the Udacity team.* |
 
-**TODO** The Reacher environment is a custom Unity game developed by the Unity and Udacity teams. It is a standalone application that can be run on all major operating systems.
+The Reacher environment is a custom Unity game developed by the Unity and Udacity teams. It is a standalone application that can be run on all major operating systems.
 
 The rewards in this environment are +0.1 for every step that the robotic arm is within the target area. At the end of the robotic arm is a small blue node. The target is a large, blue, semi-translucent sphere that rotates around the arm.
 
