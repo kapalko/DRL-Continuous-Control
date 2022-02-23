@@ -115,6 +115,70 @@ There are 4 main files within this effort: `Reacher.app`, `Continuous_Control.ip
 
 5. Line 29 and 30, `torch.save(..., 'checkpoint.pth')`, saves the actor and critic model weights every episode.
 
+## A few experiments
+
+### First successfully trained agent
+
+- 128x128x4 network 
+- normal(0,128^-0.5) initialization
+- batch size: 1024
+- buffer size: 1e5 
+- actor learning rate: 1e-4 
+- critic learning rate: 1e-3 
+- network updates every: 1 step
+- number of training episodes: 130
+- max steps per episode: 1000
+
+This took about 2 hours to train to completion. Technically not solved, but was definitely close at the 130 episode mark (should have trained longer).
+
+![](media/ddpg_original.png)
+
+### Second attempt
+
+- 128x128x4 network 
+- normal(0,128^-0.5) initialization
+- batch size: 256
+- buffer size: 1e5 
+- actor learning rate: 1e-4 
+- critic learning rate: 1e-3 
+- network updates every: 10 steps
+- number of training episodes: 150
+- max steps per episode: 1000
+
+This only took about 20 minutes, thanks to the decreased batch size and fewer network updates, but had terrible performance.
+
+![](media/ddpg_exp2.png)
+
+### Third attempt
+
+- 128x128x4 network 
+- normal(0,128^-0.5) initialization
+- batch size: 512
+- buffer size: 1e6 
+- actor learning rate: 1e-4 
+- critic learning rate: 1e-3 
+- network updates every: 1 step
+- number of training episodes: 200
+- max steps per episode: 1000
+
+![](media/ddpg_exp3.png)
+
+### Fourth attempt
+
+- 128x128x4 network 
+- xavier_normal initialization
+- batch size: 512
+- buffer size: 1e5 
+- actor learning rate: 1e-3 
+- critic learning rate: 1e-3 
+- network updates every: 1 step
+- number of training episodes: 200
+- max steps per episode: 1000
+
+A few notes. This agent trained pretty well. I previously played around with a few different setups and found these hyperparameters were training decently well but was relatively slow and the scores were increasing even after 200 episodes. So I increased the actor learning rate by 10 and that did the trick. Python says this took 19 hours to train but there is no way that is true. My math must be off :).
+
+![](media/ddpg_exp4.png)
+
 ## Credits
 
 The Reacher environment, the GIF used above, and the template for the DDPG code was from the Udacity team.
